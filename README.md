@@ -1,10 +1,10 @@
 # Fama-French Three-Factor Model: Replication and Comparison with CAPM
 
-A replication of Fama and French's (1993) three-factor asset pricing model on 25 size/book-to-market sorted U.S. equity portfolios, with extensions including a CAPM comparison, Newey-West HAC standard errors, and the Gibbons-Ross-Shanken (1989) joint test of pricing errors.
+A replication of Fama and French's (1993) three-factor asset pricing model on 25 size/book-to-market sorted U.S. equity portfolios, with extensions including a CAPM comparison, Newey-West HAC standard errors, and a GMM-based joint test of pricing errors (the HAC-robust analogue of the Gibbons-Ross-Shanken (1989) test).
 
 ## Summary
 
-This project tests whether the Fama-French three-factor model (market, size, value) prices the cross-section of 25 size/book-to-market sorted portfolios over the full available sample from July 1926 to April 2026 (1,198 monthly observations). I find that FF3 substantially improves on CAPM in economic terms — mean time-series R² rises from 0.77 to 0.91, mean absolute alpha falls by approximately 27%, and the cross-sectional R² rises from 0.73 to 0.89. However, both models are formally rejected by the GRS joint test, and a persistent small-growth anomaly survives FF3 — consistent with the literature that motivated subsequent multi-factor extensions.
+This project tests whether the Fama-French three-factor model (market, size, value) prices the cross-section of 25 size/book-to-market sorted portfolios over the full available sample from July 1926 to April 2026 (1,198 monthly observations). I find that FF3 substantially improves on CAPM in economic terms — mean time-series R² rises from 0.77 to 0.91, mean absolute alpha falls by approximately 27%, and the cross-sectional R² rises from 0.73 to 0.89. However, both models are formally rejected by the GMM joint test, and a persistent small-growth anomaly survives FF3 — consistent with the literature that motivated subsequent multi-factor extensions.
 
 ## Data
 
@@ -17,7 +17,7 @@ All series are converted from percent to decimal form. The risk-free rate is sub
 
 ## Methodology
 
-For each of the 25 test portfolios *i*, I estimate the time-series regression: 
+For each of the 25 test portfolios *i*, I estimate the time-series regression:
 
 R_i - R_f = α_i + β_MKT·(R_M - R_f) + β_SMB·SMB + β_HML·HML + ε
 
@@ -25,7 +25,7 @@ Standard errors are computed using Newey-West HAC corrections with 6 lags to acc
 
 For comparison, I also estimate the analogous CAPM specification with only the market factor on the right-hand side.
 
-The Gibbons-Ross-Shanken (1989) test is applied to both models to jointly evaluate whether all 25 alphas equal zero. This test uses the residual covariance structure across portfolios to assess the significance of the alpha vector.
+A GMM-based joint test of the zero-alpha restriction is applied to both models, jointly evaluating whether all 25 portfolio alphas equal zero. The test statistic is distributed asymptotically as chi-squared under the null, and is the HAC-robust analogue of the classical Gibbons-Ross-Shanken (1989) F-test.
 
 ## Headline Findings
 
@@ -34,8 +34,8 @@ The Gibbons-Ross-Shanken (1989) test is applied to both models to jointly evalua
 | Mean R² (time-series) | 0.768 | 0.907 |
 | Cross-sectional R² | 0.727 | 0.888 |
 | Mean \|α\| (monthly) | 0.00155 | 0.00113 |
-| GRS J-statistic | 86.09 | 83.28 |
-| GRS p-value | < 0.001 | < 0.001 |
+| GMM J-statistic | 86.09 | 83.28 |
+| J-test p-value | < 0.001 | < 0.001 |
 
 **Key results:**
 
@@ -47,7 +47,7 @@ The Gibbons-Ross-Shanken (1989) test is applied to both models to jointly evalua
 
 4. **The small-growth anomaly survives FF3.** The SMALL LoBM portfolio retains a significantly negative alpha (-0.7% per month, t ≈ -3.3 under Newey-West) — the model overestimates returns on small growth stocks. This residual anomaly motivated subsequent factor models (Carhart 1997, Fama-French 2015).
 
-5. **Both models are formally rejected by GRS, with comparable test statistics.** Despite FF3's improvements in cross-sectional R² and mean absolute alpha, the GRS J-statistic (83.28 for FF3 vs 86.09 for CAPM) is only modestly lower under FF3. This reflects the long sample's high statistical power: with nearly 1,200 monthly observations, even small alphas become statistically detectable. The rejection of FF3 is driven primarily by the persistent small-growth anomaly rather than by widespread mispricing.
+5. **Both models are formally rejected by the GMM joint test, with comparable test statistics.** Despite FF3's improvements in cross-sectional R² and mean absolute alpha, the J-statistic (83.28 for FF3 vs 86.09 for CAPM) is only modestly lower under FF3. This reflects the long sample's high statistical power: with nearly 1,200 monthly observations, even small alphas become statistically detectable. The rejection of FF3 is driven primarily by the persistent small-growth anomaly rather than by widespread mispricing.
 
 6. **The SMB risk premium is statistically weak over the full sample.** The estimated SMB premium is small (0.08% monthly) and not significantly different from zero (t ≈ 0.9), in contrast to the original Fama-French sample. This is consistent with subsequent literature documenting that the size premium has been weak outside the 1963-1991 window.
 
@@ -63,7 +63,7 @@ The estimated factor loadings behave consistently with the construction of the t
 
 The replication confirms the empirical core of Fama and French (1993): the three-factor model represents a major economic improvement over CAPM in explaining the cross-section of size/BM-sorted portfolio returns. The two extra factors substantially raise both time-series and cross-sectional R², and they meaningfully reduce mean absolute alphas across the 25 portfolios.
 
-However, statistical rejection by GRS persists for both models. This divergence between economic improvement (large) and statistical rejection (similar magnitude) is itself informative: with 100 years of monthly data, the GRS test has extreme statistical power. Even small persistent alphas — particularly the small-growth anomaly — are sufficient to reject the null at any conventional significance level. Researchers using shorter samples would likely find FF3 doing more to lower the J-statistic relative to CAPM than this long-sample result suggests.
+However, statistical rejection by the GMM joint test persists for both models. This divergence between economic improvement (large) and statistical rejection (similar magnitude) is itself informative: with 100 years of monthly data, the test has extreme statistical power. Even small persistent alphas — particularly the small-growth anomaly — are sufficient to reject the null at any conventional significance level. Researchers using shorter samples would likely find FF3 doing more to lower the J-statistic relative to CAPM than this long-sample result suggests.
 
 The weak size premium estimated over the full century is worth flagging: it suggests that the magnitude of the size effect documented in the original 1963-1991 sample may not be representative of the longer run. This is consistent with growing evidence that the size premium has been weak or absent outside its original sample window.
 
@@ -85,14 +85,14 @@ The rejection of FF3 should not be taken as a failure of the project. Rejection 
 
 ## How to Reproduce
 
-​`​`​`
+​```
 Requirements:
 pandas
 numpy
 matplotlib
 statsmodels
 linearmodels
-​`​`​`
+​```
 
 To reproduce, open `fama_french_replication.ipynb` and run all cells in order. Both data files should be placed in the same directory as the notebook.
 
@@ -100,6 +100,7 @@ To reproduce, open `fama_french_replication.ipynb` and run all cells in order. B
 
 - Fama, E. F., & French, K. R. (1993). Common risk factors in the returns on stocks and bonds. *Journal of Financial Economics*, 33(1), 3-56.
 - Gibbons, M. R., Ross, S. A., & Shanken, J. (1989). A test of the efficiency of a given portfolio. *Econometrica*, 57(5), 1121-1152.
+- Hansen, L. P. (1982). Large sample properties of generalized method of moments estimators. *Econometrica*, 50(4), 1029-1054.
 - Newey, W. K., & West, K. D. (1987). A simple, positive semi-definite, heteroskedasticity and autocorrelation consistent covariance matrix. *Econometrica*, 55(3), 703-708.
 
 ---
